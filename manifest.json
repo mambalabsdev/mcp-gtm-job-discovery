@@ -1,0 +1,37 @@
+{
+  "manifest_version": "0.3",
+  "name": "mcp-gtm-job-discovery",
+  "version": "1.0.0",
+  "description": "MCP server for the Mamba Labs Job Posting Monitor actor on Apify. Finds companies hiring for your role keywords across job boards and returns one flat, firmographic enriched row per posting.",
+  "author": {
+    "name": "Mamba Labs"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/mambalabsdev/mcp-gtm-job-discovery",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mambalabsdev/mcp-gtm-job-discovery"
+  },
+  "server": {
+    "type": "node",
+    "entry_point": "build/index.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/build/index.js"
+      ],
+      "env": {
+        "APIFY_TOKEN": "${user_config.apify_token}"
+      }
+    }
+  },
+  "user_config": {
+    "apify_token": {
+      "type": "string",
+      "title": "Apify API Token",
+      "description": "Apify API token for running the actor",
+      "sensitive": true,
+      "required": false
+    }
+  }
+}

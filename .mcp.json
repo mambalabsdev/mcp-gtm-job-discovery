@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "mamba-gtm-job-discovery": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@mambalabsdev/mcp-gtm-job-discovery"
+      ],
+      "env": {
+        "APIFY_TOKEN": "your-apify-token"
+      }
+    }
+  }
+}
