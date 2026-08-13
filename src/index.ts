@@ -232,6 +232,7 @@ server.registerTool(
     max_results: z.number().int().optional().describe("Upper bound on raw postings pulled from the discovery source before filtering. Higher values cost more. Default: 100."),
     max_companies: z.number().int().optional().describe("Cap on unique companies enriched per run (firmographics + LinkedIn). Bounds sub-actor cost. Default: 40."),
     serpapi_key: z.string().optional().describe("SerpAPI key used for Google Jobs discovery (get a free key at serpapi.com, 250 searches/month, no card). Required to produce results unless a SERPAPI_KEY environment variable is set on the actor."),
+    use_gio21: z.boolean().optional().describe("Best-effort fallback to the gio21 Google Jobs sub-actor when no SerpAPI key is available. Only works on Apify plans that permit running third-party public actors. Default: false."),
     },
   },
   async (args) =>
