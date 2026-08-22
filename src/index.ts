@@ -210,7 +210,7 @@ server.registerTool(
   {
     title: "Monitor Job Postings",
     description:
-      "Find companies that are hiring for a set of role keywords across public job boards, and return one flat row per posting enriched with company firmographics and the company LinkedIn URL. Discovery runs through Google Jobs, and passing your own SerpAPI key runs that search on your own quota. Postings are filtered by age, by country, and optionally by employee count, and staffing agencies and freelance marketplaces are dropped by default because they are noise for direct outreach. A cross run delta cache means a repeat run returns only postings it has not emitted before, and previous_run_date lets you set that watermark yourself. max_results caps how many raw postings are pulled before filtering and max_companies caps how many unique companies get enriched, so the two together are the cost dial. Requires an APIFY_TOKEN and consumes Apify credits. Read only: this discovers and enriches, it writes nothing.",
+      "Find companies that are hiring for a set of role keywords across public job boards, and return one flat row per posting enriched with company firmographics and the company LinkedIn URL. Discovery runs through the boards named in sources: Google Jobs (passing your own SerpAPI key runs that search on your own quota) plus four direct boards that need no credentials at all, Jobicy, Remotive, Arbeitnow and The Muse. Every row carries posted_via, the board the posting was actually published through. Postings are filtered by age, by country, and optionally by employee count, and staffing agencies and freelance marketplaces are dropped by default because they are noise for direct outreach. A cross run delta cache means a repeat run returns only postings it has not emitted before, and previous_run_date lets you set that watermark yourself. max_results caps how many raw postings are pulled before filtering and max_companies caps how many unique companies get enriched, so the two together are the cost dial. Requires an APIFY_TOKEN and consumes Apify credits. Read only: this discovers and enriches, it writes nothing.",
     annotations: {
       title: "Monitor Job Postings",
       readOnlyHint: true,
@@ -220,6 +220,7 @@ server.registerTool(
     },
     inputSchema: {
     keywords: z.array(z.string()).describe("Editorial / content role titles to search for across job boards."),
+    sources: z.array(z.enum(["google_jobs", "jobicy", "remotive", "arbeitnow", "themuse"])).optional().describe("Which job boards to search. \"google_jobs\" is the widest corpus and needs a SerpAPI key. The four direct boards need no credentials at all: \"jobicy\" and \"remotive\" for remote roles, \"arbeitnow\" for Europe, \"themuse\" for US mid market and enterprise employers. Select several at once; a posting carried by two boards is deduplicated on company plus role and counted once. Default: [\"google_jobs\"]."),
     country: z.string().optional().describe("Geographic filter, e.g. United States, United Kingdom, Canada. Default: \"United States\"."),
     lookback_days: z.number().int().optional().describe("Only return postings newer than this many days. Default: 30."),
     company_size_min: z.number().int().optional().describe("Optional. Drop companies with fewer employees than this (only applied when company size is known)."),
