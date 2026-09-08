@@ -37,6 +37,7 @@ Give it a list of role keywords and it returns the companies currently advertisi
 | Input | Type | Required | Notes |
 | --- | --- | --- | --- |
 | `keywords` | array | yes | Editorial / content role titles to search for across job boards. |
+| `sources` | array | no | Which job boards to search: `google_jobs` (needs a SerpAPI key) plus four that need no credentials at all, `jobicy`, `remotive`, `arbeitnow` and `themuse`. Select several; a posting carried by two boards is deduplicated and counted once. Default `["google_jobs"]`. |
 | `country` | string | no | Geographic filter, e.g. United States, United Kingdom, Canada. |
 | `lookback_days` | integer | no | Only return postings newer than this many days. |
 | `company_size_min` | integer | no | Optional. Drop companies with fewer employees than this (only applied when company size is known). |
