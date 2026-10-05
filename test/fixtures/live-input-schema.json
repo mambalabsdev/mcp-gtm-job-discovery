@@ -1,0 +1,280 @@
+{
+  "_provenance": {
+    "actorId": "QCfICD9kOPiOdj5iI",
+    "buildId": "YeirDMFJGrSNggTb9",
+    "buildNumber": "0.0.27",
+    "readAt": "2026-10-05T15:41:22.300Z"
+  },
+  "title": "Editorial Job Posting Monitor",
+  "description": "Find companies hiring for any role across job boards, cheapest sources first. Keyless boards run every keyword; metered sources (Adzuna, JobsPipe, TheirStack, Google Jobs via SerpAPI) run only on keywords still short. Free Apify-plan users get 25 result rows per calendar month (resets monthly); upgrade for unlimited: https://apify.com/pricing?fpr=mamba",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "keywords": {
+      "title": "Role Keywords",
+      "type": "array",
+      "description": "Editorial / content role titles to search for across job boards.",
+      "default": [
+        "proofreader",
+        "copy editor",
+        "content editor"
+      ],
+      "prefill": [
+        "proofreader",
+        "copy editor",
+        "content editor"
+      ],
+      "editor": "stringList",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sources": {
+      "title": "Job Board Sources",
+      "type": "array",
+      "description": "Which job boards to search, run as an ordered chain rather than all at once. Tier 0 needs no key and runs every keyword: Jobicy, Remotive, Arbeitnow, The Muse, Remote OK, We Work Remotely and Himalayas. Tier 1 is Adzuna (metered per call, needs an app id and key). Tier 2 runs only on keywords the earlier tiers left short: JobsPipe and TheirStack (metered per job returned) and Google Jobs through SerpAPI (metered per search). A posting that appears on two boards is deduplicated and counted once.",
+      "editor": "select",
+      "items": {
+        "type": "string",
+        "enum": [
+          "google_jobs",
+          "jobicy",
+          "remotive",
+          "arbeitnow",
+          "themuse",
+          "remoteok",
+          "weworkremotely",
+          "himalayas",
+          "adzuna",
+          "jobspipe",
+          "theirstack"
+        ],
+        "enumTitles": [
+          "Google Jobs via SerpAPI (tier 2, needs a SerpAPI key)",
+          "Jobicy (tier 0, remote roles)",
+          "Remotive (tier 0, remote roles)",
+          "Arbeitnow (tier 0)",
+          "The Muse (tier 0)",
+          "Remote OK (tier 0, remote roles)",
+          "We Work Remotely (tier 0, remote roles)",
+          "Himalayas (tier 0, remote roles)",
+          "Adzuna (tier 1, needs an app id and key)",
+          "JobsPipe (tier 2, needs a key)",
+          "TheirStack (tier 2, needs a key)"
+        ]
+      },
+      "default": [
+        "google_jobs"
+      ],
+      "prefill": [
+        "jobicy"
+      ]
+    },
+    "country": {
+      "title": "Country",
+      "type": "string",
+      "description": "Geographic filter, e.g. United States, United Kingdom, Canada.",
+      "default": "United States",
+      "prefill": "United States",
+      "editor": "textfield"
+    },
+    "countries": {
+      "title": "Countries",
+      "type": "array",
+      "description": "Loop these countries inside one run. Overrides Country when set. Metered sources query each country separately; keyless remote boards are global and run once. Use the names Google Jobs accepts: United States, United Kingdom, Canada.",
+      "editor": "stringList",
+      "items": {
+        "type": "string"
+      },
+      "prefill": [
+        "United States"
+      ]
+    },
+    "lookback_days": {
+      "title": "Lookback Days",
+      "type": "integer",
+      "description": "Only return postings newer than this many days.",
+      "default": 30,
+      "prefill": 30,
+      "minimum": 1,
+      "maximum": 365,
+      "editor": "number"
+    },
+    "company_size_min": {
+      "title": "Minimum Employee Count",
+      "type": "integer",
+      "description": "Optional. Drop companies with fewer employees than this (only applied when company size is known).",
+      "minimum": 0,
+      "editor": "number"
+    },
+    "company_size_max": {
+      "title": "Maximum Employee Count",
+      "type": "integer",
+      "description": "Optional. Drop companies larger than this (only applied when company size is known).",
+      "minimum": 0,
+      "editor": "number"
+    },
+    "exclude_staffing_agencies": {
+      "title": "Exclude Staffing Agencies",
+      "type": "boolean",
+      "description": "Filter out staffing and recruitment agency postings using name and job-description heuristics.",
+      "default": true,
+      "prefill": true,
+      "editor": "checkbox"
+    },
+    "exclude_freelance_marketplaces": {
+      "title": "Exclude Freelance Marketplaces",
+      "type": "boolean",
+      "description": "Filter out postings where the company is a freelance marketplace (Upwork, Fiverr, etc.), which are noise for direct outreach.",
+      "default": true,
+      "prefill": true,
+      "editor": "checkbox"
+    },
+    "freelance_marketplaces": {
+      "title": "Freelance Marketplace Names",
+      "type": "array",
+      "description": "Company names treated as freelance marketplaces and excluded when the toggle above is on. Defaults shown; override or extend as needed.",
+      "default": [
+        "Upwork",
+        "Fiverr",
+        "Freelancer",
+        "Toptal",
+        "PeoplePerHour",
+        "Guru",
+        "99designs"
+      ],
+      "prefill": [
+        "Upwork",
+        "Fiverr",
+        "Freelancer",
+        "Toptal",
+        "PeoplePerHour",
+        "Guru",
+        "99designs"
+      ],
+      "editor": "stringList",
+      "items": {
+        "type": "string"
+      }
+    },
+    "remote_only": {
+      "title": "Remote Only",
+      "type": "boolean",
+      "description": "Only return remote / work-from-home postings.",
+      "default": false,
+      "editor": "checkbox"
+    },
+    "previous_run_date": {
+      "title": "Previous Run Date",
+      "type": "string",
+      "description": "Optional ISO date (e.g. 2026-06-01) of your last run. Only postings newer than this are emitted, on top of the built-in cross-run delta cache.",
+      "editor": "textfield"
+    },
+    "max_results": {
+      "title": "Max Postings To Scan",
+      "type": "integer",
+      "description": "Upper bound on raw postings pulled from the discovery source before filtering. Higher values cost more.",
+      "default": 100,
+      "prefill": 25,
+      "minimum": 1,
+      "maximum": 500,
+      "editor": "number"
+    },
+    "max_companies": {
+      "title": "Max Companies To Enrich",
+      "type": "integer",
+      "description": "Cap on unique companies enriched per run (firmographics + LinkedIn). Bounds sub-actor cost.",
+      "default": 40,
+      "prefill": 40,
+      "minimum": 1,
+      "maximum": 200,
+      "editor": "number"
+    },
+    "serpapi_key": {
+      "title": "SerpAPI Key",
+      "type": "string",
+      "description": "SerpAPI key used for Google Jobs discovery (get a free key at serpapi.com, 250 searches/month, no card). Required to produce results unless a SERPAPI_KEY environment variable is set on the actor.",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "adzuna_app_id": {
+      "title": "Adzuna App ID",
+      "type": "string",
+      "description": "Adzuna application id for the adzuna source. Optional; the ADZUNA_APP_ID environment variable is used when this is empty.",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "adzuna_app_key": {
+      "title": "Adzuna App Key",
+      "type": "string",
+      "description": "Adzuna application key for the adzuna source. Optional; the ADZUNA_APP_KEY environment variable is used when this is empty.",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "jobspipe_key": {
+      "title": "JobsPipe API Key",
+      "type": "string",
+      "description": "JobsPipe Bearer key (jp_live_...) for the jobspipe source. Optional; the JOBSPIPE_KEY environment variable is used when this is empty. JobsPipe bills one credit per job returned.",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "theirstack_key": {
+      "title": "TheirStack API Key",
+      "type": "string",
+      "description": "TheirStack API key (a JWT) for the theirstack source. Optional; the THEIRSTACK_KEY environment variable is used when this is empty. TheirStack bills one credit per job returned.",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "metered_window_days": {
+      "title": "Metered Date Window (days)",
+      "type": "integer",
+      "description": "Only ask the metered sources for postings this many days old or newer. JobsPipe and TheirStack bill per job returned, seen before or not, so a narrow window is the biggest credit saver. 1 to 7; a daily sweep wants 2.",
+      "default": 2,
+      "prefill": 2,
+      "minimum": 1,
+      "maximum": 7,
+      "editor": "number"
+    },
+    "enough_new_companies_per_keyword": {
+      "title": "Enough New Companies Per Keyword",
+      "type": "integer",
+      "description": "Stop the chain for a keyword once this many distinct new companies have been found for it this run. Later, metered tiers only run on keywords still below this.",
+      "default": 3,
+      "minimum": 1,
+      "maximum": 100,
+      "editor": "number"
+    },
+    "metered_run_cap": {
+      "title": "Metered Run Cap",
+      "type": "integer",
+      "description": "Ceiling per metered source per country per run (searches for SerpAPI, calls for Adzuna, jobs for JobsPipe and TheirStack) when no quota ledger row decides a smaller one.",
+      "default": 50,
+      "minimum": 1,
+      "maximum": 500,
+      "editor": "number"
+    },
+    "use_gio21": {
+      "title": "Use Google Jobs sub-actor fallback",
+      "type": "boolean",
+      "description": "Best-effort fallback to the gio21 Google Jobs sub-actor when no SerpAPI key is available. Only works on Apify plans that permit running third-party public actors.",
+      "default": false,
+      "editor": "hidden"
+    },
+    "qa_test_mode": {
+      "title": "QA test mode",
+      "type": "boolean",
+      "description": "Internal QA fast-path. When true, the actor skips all sub-actor enrichment and emits a single summary row so automated checks complete well within the time budget. Not for normal use.",
+      "default": false,
+      "editor": "hidden"
+    },
+    "source_tag": {
+      "title": "Source Tag",
+      "type": "string",
+      "description": "Internal attribution tag set by Mamba Labs on published task examples. Not required, and nothing depends on it. Leave it empty.",
+      "editor": "hidden"
+    }
+  },
+  "required": [
+    "keywords"
+  ]
+}

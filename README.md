@@ -36,20 +36,30 @@ Give it a list of role keywords and it returns the companies currently advertisi
 
 | Input | Type | Required | Notes |
 | --- | --- | --- | --- |
-| `keywords` | array | yes | Editorial / content role titles to search for across job boards. |
-| `sources` | array | no | Which job boards to search: `google_jobs` (needs a SerpAPI key) plus four that need no credentials at all, `jobicy`, `remotive`, `arbeitnow` and `themuse`. Select several; a posting carried by two boards is deduplicated and counted once. Default `["google_jobs"]`. |
-| `country` | string | no | Geographic filter, e.g. United States, United Kingdom, Canada. |
-| `lookback_days` | integer | no | Only return postings newer than this many days. |
-| `company_size_min` | integer | no | Optional. Drop companies with fewer employees than this (only applied when company size is known). |
-| `company_size_max` | integer | no | Optional. Drop companies larger than this (only applied when company size is known). |
-| `exclude_staffing_agencies` | boolean | no | Filter out staffing and recruitment agency postings using name and job-description heuristics. |
-| `exclude_freelance_marketplaces` | boolean | no | Filter out postings where the company is a freelance marketplace (Upwork, Fiverr, etc.), which are noise for direct outreach. |
-| `freelance_marketplaces` | array | no | Company names treated as freelance marketplaces and excluded when the toggle above is on. Defaults shown; override or extend as needed. |
-| `remote_only` | boolean | no | Only return remote / work-from-home postings. |
-| `previous_run_date` | string | no | Optional ISO date (e.g. 2026-06-01) of your last run. Only postings newer than this are emitted, on top of the built-in cross-run delta cache. |
-| `max_results` | integer | no | Upper bound on raw postings pulled from the discovery source before filtering. Higher values cost more. |
-| `max_companies` | integer | no | Cap on unique companies enriched per run (firmographics + LinkedIn). Bounds sub-actor cost. |
-| `serpapi_key` | string | no | SerpAPI key used for Google Jobs discovery (get a free key at serpapi.com, 250 searches/month, no card). Required to produce results unless a SERPAPI_KEY environment variable is set on the actor. |
+| `keywords` | array | yes | Role titles to search for, one per entry. Each keyword runs through the source chain separately. |
+| `sources` | array | no | Job boards, run as an ordered chain. Tier 0, no key: `jobicy`, `remotive`, `arbeitnow`, `themuse`, `remoteok`, `weworkremotely`, `himalayas`. Tier 1: `adzuna` (needs `adzuna_app_id` and `adzuna_app_key`). Tier 2, only for keywords still short: `jobspipe`, `theirstack` (each needs its key) and `google_jobs` (needs `serpapi_key`). A posting on two boards is counted once. Default `["google_jobs"]`. |
+| `country` | string | no | Geographic filter, for example United States, United Kingdom, Canada. Default `United States`. |
+| `countries` | array | no | Loop these countries in one run. Overrides `country` when set. |
+| `lookback_days` | integer | no | Only return postings newer than this many days. Default `30`. |
+| `company_size_min` | integer | no | Drop companies with fewer employees than this (applied only when company size is known). |
+| `company_size_max` | integer | no | Drop companies larger than this (applied only when company size is known). |
+| `exclude_staffing_agencies` | boolean | no | Filter out staffing and recruitment agency postings. Default `true`. |
+| `exclude_freelance_marketplaces` | boolean | no | Filter out postings where the company is a freelance marketplace (Upwork, Fiverr, and others). Default `true`. |
+| `freelance_marketplaces` | array | no | Company names treated as freelance marketplaces. Default `["Upwork", "Fiverr", "Freelancer", "Toptal", "PeoplePerHour", "Guru", "99designs"]`. |
+| `remote_only` | boolean | no | Only return remote postings. Default `false`. |
+| `previous_run_date` | string | no | ISO date of your last run, for example 2026-06-01. Only newer postings are emitted, on top of the built in cross run delta cache. |
+| `max_results` | integer | no | Upper bound on raw postings pulled before filtering. Higher values cost more. Default `100`. |
+| `max_companies` | integer | no | Cap on unique companies enriched per run (firmographics and LinkedIn). Default `40`. |
+| `serpapi_key` | string | no | Your SerpAPI key for the `google_jobs` source (free key at serpapi.com, 250 searches a month). |
+| `adzuna_app_id` | string | no | Your Adzuna application id for the `adzuna` source. |
+| `adzuna_app_key` | string | no | Your Adzuna application key for the `adzuna` source. |
+| `jobspipe_key` | string | no | Your JobsPipe key for the `jobspipe` source. Billed by JobsPipe per job returned. |
+| `theirstack_key` | string | no | Your TheirStack key for the `theirstack` source. Billed by TheirStack per job returned. |
+| `metered_window_days` | integer | no | Ask the metered sources only for postings this many days old or newer, 1 to 7. Default `2`. |
+| `enough_new_companies_per_keyword` | integer | no | Stop the chain for a keyword once this many new companies are found. Default `3`. |
+| `metered_run_cap` | integer | no | Ceiling per metered source per country per run. Default `50`. |
+
+Keys passed as inputs travel in the tool call and stay in the chat transcript.
 
 ## Billing
 
@@ -65,6 +75,6 @@ Errors are surfaced, never swallowed. An invalid input, an invalid token, an exh
 
 ## Source
 
-The actor is on the [Apify Store]( https://apify.com/mambalabs/gtm-job-discovery). This wrapper is [MIT licensed](LICENSE).
+The actor is on the [Apify Store](https://apify.com/mambalabs/gtm-job-discovery). This wrapper is [MIT licensed](LICENSE).
 
 Built by [Mamba Labs](https://apify.com/mambalabs)
