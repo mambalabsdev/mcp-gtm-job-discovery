@@ -28,15 +28,12 @@ function compact(obj: Record<string, unknown>): Record<string, unknown> {
   return out;
 }
 
-// How long the actor run itself is allowed to take, in seconds.
-//
-// MEASURED, not chosen from the air. Over this actor's own run history in
-// actor_runs on 2026-08-13, SUCCEEDED runs only, 31 of them carrying a
-// duration: P50 257.6 s, P95 321.7 s, P99 338.7 s, slowest ever 345.7 s.
-// 900 s is 2.6 times the slowest run this actor has ever completed and 2.8
-// times its P95, which is headroom for a slower day without letting a hung run
-// bill indefinitely.
-const ACTOR_RUN_TIMEOUT_SECS = 900;
+// How long the actor run itself is allowed to take, in seconds. One value for
+// every Mamba Labs wrapper, set 2026-10-05: start and poll exists so a long run
+// survives, and a shorter limit would end the long runs it was built for. Past
+// this limit the run ends TIMED-OUT and the caller is told so, with the run id.
+// Measured on 2026-08-13 over 31 SUCCEEDED runs: slowest ever 345.7 s.
+const ACTOR_RUN_TIMEOUT_SECS = 1800;
 
 // How long this wrapper waits for that run, in milliseconds. The actor's own
 // timeout plus two minutes, so the run's own TIMED-OUT status is what the
