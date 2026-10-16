@@ -1,7 +1,7 @@
 {
   "name": "mcp-gtm-job-discovery",
   "displayName": "Job Posting Monitor",
-  "version": "1.0.0",
+  "version": "1.5.0",
   "description": "MCP server for the Mamba Labs Job Posting Monitor actor on Apify. Finds companies hiring for your role keywords across job boards and returns one flat, firmographic enriched row per posting.",
   "author": {
     "name": "Mamba Labs",
