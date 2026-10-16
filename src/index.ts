@@ -210,12 +210,13 @@ server.registerTool(
       "Find companies that are hiring for a set of role keywords across public job boards, and return one flat row per posting enriched with company firmographics and the company LinkedIn URL. Discovery runs through the boards named in sources as a chain: seven keyless boards first (Jobicy, Remotive, Arbeitnow, The Muse, Remote OK, We Work Remotely, Himalayas), then Adzuna, then the metered JobsPipe, TheirStack, and Google Jobs on your own keys, only for keywords still short of new companies. Every row carries posted_via, the board the posting was actually published through. Postings are filtered by age, by country, and optionally by employee count, and staffing agencies and freelance marketplaces are dropped by default because they are noise for direct outreach. A cross run delta cache means a repeat run returns only postings it has not emitted before, and previous_run_date lets you set that watermark yourself. max_results caps how many raw postings are pulled before filtering and max_companies caps how many unique companies get enriched, so the two together are the cost dial. Use it to build a list of companies hiring for the roles you sell into. Requires an APIFY_TOKEN and consumes Apify credits; it discovers and enriches and writes nothing.",
     annotations: {
       title: "Monitor Job Postings",
-      readOnlyHint: true,
+      readOnlyHint: false,
       destructiveHint: false,
       idempotentHint: true,
       openWorldHint: true,
     },
     inputSchema: {
+    max_charge_usd: z.number().min(0).optional().describe("Optional. The run stops before the next result that would take this run's charges over this amount, and keeps every result already charged. Leave empty to rely only on the maximum cost per run you set in Apify."),
     keywords: z.array(z.string()).describe("Role titles to search for across job boards, one per entry, for example [\"account executive\", \"revops manager\"]. Each keyword runs through the source chain separately."),
     sources: z.array(z.enum(["google_jobs", "jobicy", "remotive", "arbeitnow", "themuse", "remoteok", "weworkremotely", "himalayas", "adzuna", "jobspipe", "theirstack"])).optional().describe("Which job boards to search, run as an ordered chain. Tier 0 needs no key and runs every keyword: jobicy, remotive, arbeitnow, themuse, remoteok, weworkremotely, himalayas. Tier 1 is adzuna (needs adzuna_app_id and adzuna_app_key). Tier 2 runs only on keywords the earlier tiers left short: jobspipe and theirstack (each needs its key, billed by the provider per job returned) and google_jobs (needs serpapi_key). A posting on two boards is deduplicated and counted once. Default: [\"google_jobs\"]."),
     country: z.string().optional().describe("Geographic filter, e.g. United States, United Kingdom, Canada. Default: \"United States\"."),

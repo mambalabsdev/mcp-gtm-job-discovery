@@ -58,12 +58,20 @@ Give it a list of role keywords and it returns the companies currently advertisi
 | `metered_window_days` | integer | no | Ask the metered sources only for postings this many days old or newer, 1 to 7. Default `2`. |
 | `enough_new_companies_per_keyword` | integer | no | Stop the chain for a keyword once this many new companies are found. Default `3`. |
 | `metered_run_cap` | integer | no | Ceiling per metered source per country per run. Default `50`. |
+| `max_charge_usd` | number | no | Optional cost cap in USD for this run. The actor stops before an item that could take its charges past this amount. Omit to rely on the maximum cost per run set in Apify. |
 
 Keys passed as inputs travel in the tool call and stay in the chat transcript.
 
 ## Billing
 
 You are charged per result row returned, plus a small actor start fee. Filtered postings are free.
+
+Price per event on the Apify FREE plan, from the live pricing record; paid Apify plans pay less per event.
+
+| Event | Price (USD) |
+| --- | --- |
+| Actor Start (`apify-actor-start`) | 0.00005 |
+| result (`apify-default-dataset-item`) | 0.02 |
 
 Pricing is on the [actor's Apify page](https://apify.com/mambalabs/gtm-job-discovery). Running this server consumes Apify credits.
 
